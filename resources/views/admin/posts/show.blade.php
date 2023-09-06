@@ -9,13 +9,13 @@
     <hr>
     <div class="clearfix">
         @if ($post->image)
-            <img class="float-start me-2 img-fluid" width="250" src="{{ asset('storage/' . $post->image) }}"
-                alt="{{ $post->title }}">
+            <img class="float-start me-2 img-fluid" width="250" src="{{ $post->getImagePath() }}" alt="{{ $post->title }}">
         @endif
         <p>{{ $post->content }}</p>
         <div>
             <strong>Creato il:</strong> {{ $post->created_at }}
             <strong>Ultima modifica:</strong> {{ $post->updated_at }}
+            <strong>Tipologia progetto:</strong> {{ $post->type ? $post->type->label : 'Nessuna' }}
         </div>
     </div>
     <hr>

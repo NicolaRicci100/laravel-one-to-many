@@ -36,7 +36,7 @@
         </div>
     </div>
     <div class="col-1">
-        <img src="{{ $post->image ? asset('storage/' . $post->image) : 'https://marcolanci.it/utils/placeholder.jpg' }}"
+        <img src="{{ $post->image ? $post->getImagePath() : 'https://marcolanci.it/utils/placeholder.jpg' }}"
             alt="preview" class="img-fluid" id="image-preview">
     </div>
 </div>

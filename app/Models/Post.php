@@ -11,12 +11,12 @@ class Post extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['title', 'slug', 'image', 'content'];
+    protected $fillable = ['title', 'slug', 'image', 'content', 'type_id'];
 
-    public function getImagePath()
-    {
-        return asset('storage/' . $this->image);
-    }
+    // public function getImagePath()
+    // {
+    //     return asset('storage/' . $this->image);
+    // }
 
     public function type()
     {

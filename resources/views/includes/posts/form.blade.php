@@ -28,16 +28,28 @@
             <textarea class="form-control" id="content" rows="10" name="content" required>{{ old('content', $post->content) }}</textarea>
         </div>
     </div>
-    <div class="col-11">
+    <div class="col-4">
+        <div class="mb-3">
+            <label for="type" class="form-label">Tipologia</label>
+            <select name="type_id" id="type" class="form-select">
+                <option value="">Nulla</option>
+                @foreach ($types as $type)
+                    <option @if (old('type_id', $post->type_id) == $type->id) selected @endif value="{{ $type->id }}">
+                        {{ $type->label }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+    <div class="col-7">
         <div class="mb-3">
             <label for="image" class="form-label">Copertina</label>
-            <input type="file" class="form-control" id="image" name="image"
-                placeholder="Inserisci un url valido">
+            <input type="url" class="form-control" id="image" name="image"
+                value="{{ old('image', $post->image) }}" placeholder="Inserisci un url valido">
         </div>
     </div>
     <div class="col-1">
-        <img src="{{ $post->image ? $post->getImagePath() : 'https://marcolanci.it/utils/placeholder.jpg' }}"
-            alt="preview" class="img-fluid" id="image-preview">
+        <img src="{{ old('image', $post->image ?? 'https://marcolanci.it/utils/placeholder.jpg') }}" alt="preview"
+            class="img-fluid" id="image-preview">
     </div>
 </div>
 <hr>

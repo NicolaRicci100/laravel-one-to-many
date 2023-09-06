@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Type;
 use Illuminate\Support\Str;
 use GrahamCampbell\ResultType\Success;
 use Illuminate\Support\Facades\Storage;
@@ -27,7 +28,8 @@ class PostController extends Controller
     public function create()
     {
         $post = new Post();
-        return view('admin.posts.create', compact('post'));
+        $types = Type::select('id', 'label')->get();
+        return view('admin.posts.create', compact('post', 'types'));
     }
 
     /**
@@ -39,24 +41,26 @@ class PostController extends Controller
             [
                 'title' => 'required|string|max:50|unique:posts',
                 'content' => 'required|string',
-                'image' => 'nullable|image:jpg,jpeg,png'
+                'image' => 'nullable|url',
+                'type_id' => 'nullable|exists:types,id'
             ],
             [
                 'title.required' => 'Il titolo è obbligatorio',
                 'title.max' => 'Il titolo deve essere lungo massimo :max caratteri',
                 'title.unique' => "Esiste già un post dal titolo $request->title",
                 'content.required' => 'Non può esistere un post senza contenuto',
-                'image.image' => "L'immagine inserita non è valida"
+                'image.url' => "L'url inserito non è valido",
+                'type_id.exists' => 'Tipologia inesistente'
             ]
         );
 
         $data = $request->all();
         $post = new Post();
 
-        if (array_key_exists('image', $data)) {
-            $img_url = Storage::putFile('post_images', $data['image']);
-            $data['image'] = $img_url;
-        }
+        // if (array_key_exists('image', $data)) {
+        //     $img_url = Storage::putFile('post_images', $data['image']);
+        //     $data['image'] = $img_url;
+        // }
 
         $post->fill($data);
         $post->slug = Str::slug($post->title, '-');
@@ -77,7 +81,8 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        return view('admin.posts.edit', compact('post'));
+        $types = Type::select('id', 'label')->get();
+        return view('admin.posts.edit', compact('post', 'types'));
     }
 
     /**
@@ -89,25 +94,27 @@ class PostController extends Controller
             [
                 'title' => ['required', 'string', 'max:50', Rule::unique('posts')->ignore($post->id)],
                 'content' => 'required|string',
-                'image' => 'nullable|image:jpg,jpeg,png'
+                'image' => 'nullable|url',
+                'type_id' => 'nullable|exists:types,id'
             ],
             [
                 'title.required' => 'Il titolo è obbligatorio',
                 'title.max' => 'Il titolo deve essere lungo massimo :max caratteri',
                 'title.unique' => "Esiste già un post dal titolo $request->title",
                 'content.required' => 'Non può esistere un post senza contenuto',
-                'image.image' => "L'immagine inserita non è valida"
+                'image.url' => "L'url inserito non è valido",
+                'type_id.exists' => 'Tipologia inesistente'
             ]
         );
 
         $data = $request->all();
         $data['slug'] = Str::slug($data['title'], '-');
 
-        if (array_key_exists('image', $data)) {
-            if ($post->image) Storage::delete($post->image);
-            $img_url = Storage::putFile('post_images', $data['image']);
-            $data['image'] = $img_url;
-        }
+        // if (array_key_exists('image', $data)) {
+        //     if ($post->image) Storage::delete($post->image);
+        //     $img_url = Storage::putFile('post_images', $data['image']);
+        //     $data['image'] = $img_url;
+        // }
 
         $post->update($data);
 
